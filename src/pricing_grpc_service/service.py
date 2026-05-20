@@ -48,9 +48,7 @@ class PricingServicer(pricing_pb2_grpc.PricingServicer):
     ) -> AsyncIterator[pricing_pb2.Quote]:
         symbols = [s for s in request.symbols if s]
         if not symbols:
-            await context.abort(
-                grpc.StatusCode.INVALID_ARGUMENT, "at least one symbol is required"
-            )
+            await context.abort(grpc.StatusCode.INVALID_ARGUMENT, "at least one symbol is required")
 
         requested = request.interval_ms or self.DEFAULT_INTERVAL_MS
         interval_ms = max(self.MIN_INTERVAL_MS, min(requested, self.MAX_INTERVAL_MS))
@@ -60,7 +58,10 @@ class PricingServicer(pricing_pb2_grpc.PricingServicer):
         peer = context.peer()
         logger.info(
             "stream start peer=%s symbols=%s interval_ms=%s max_updates=%s",
-            peer, symbols, interval_ms, budget or "unbounded",
+            peer,
+            symbols,
+            interval_ms,
+            budget or "unbounded",
         )
         sent = 0
         try:

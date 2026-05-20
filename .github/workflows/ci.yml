@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  # Opt into Node.js 24 runtime for JavaScript actions so deprecation warnings
+  # for actions/checkout and actions/setup-python don't pollute the logs.
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -40,13 +45,37 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
       - name: Build image
         uses: docker/build-push-action@v6
         with:
           context: .
           push: false
+          load: true
           tags: pricing-grpc-service:ci
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Smoke test the image starts and serves
+        run: |
+          docker run -d --name pricing-ci -p 50051:50051 -p 9090:9090 \
+            pricing-grpc-service:ci --seed 1 --log-level INFO
+          # Wait for the server to bind.
+          for i in $(seq 1 20); do
+            if nc -z 127.0.0.1 50051; then break; fi
+            sleep 0.5
+          done
+          # /metrics endpoint must be live.
+          curl -sf http://127.0.0.1:9090/metrics > /dev/null
+          # Exercise the unary RPC with grpcurl via reflection.
+          docker run --rm --network host fullstorydev/grpcurl:latest \
+            -plaintext -d '{"symbol":"BTC-USD"}' \
+            localhost:50051 pricing.v1.Pricing/GetQuote
+          # Health check.
+          docker run --rm --network host fullstorydev/grpcurl:latest \
+            -plaintext localhost:50051 grpc.health.v1.Health/Check
+          docker logs pricing-ci
+          docker rm -f pricing-ci

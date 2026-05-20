@@ -19,9 +19,7 @@ def _env_path(name: str) -> Path | None:
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="pricing-grpc-service")
     parser.add_argument("--host", default=os.getenv("GRPC_HOST", "0.0.0.0"))
-    parser.add_argument(
-        "--port", type=int, default=int(os.getenv("GRPC_PORT", "50051"))
-    )
+    parser.add_argument("--port", type=int, default=int(os.getenv("GRPC_PORT", "50051")))
     parser.add_argument(
         "--seed",
         type=int,

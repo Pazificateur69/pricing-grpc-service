@@ -19,7 +19,12 @@ repos:
     rev: v1.11.2
     hooks:
       - id: mypy
-        files: ^src/
+        name: mypy (strict, whole tree)
+        # Always run mypy on the whole src/ tree so it can see the generated
+        # stubs and apply the project's pyproject.toml overrides. Without
+        # pass_filenames=false, pre-commit would feed only changed files.
+        pass_filenames: false
+        args: ["src"]
         additional_dependencies:
           - grpcio>=1.62.0
           - protobuf>=4.25.0

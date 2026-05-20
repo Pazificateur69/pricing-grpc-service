@@ -22,16 +22,12 @@ PRICING_FULL_NAME = pricing_pb2.DESCRIPTOR.services_by_name["Pricing"].full_name
 @pytest_asyncio.fixture
 async def channel() -> AsyncIterator[grpc.aio.Channel]:
     server = grpc.aio.server(interceptors=(ObservabilityInterceptor(),))
-    pricing_pb2_grpc.add_PricingServicer_to_server(
-        PricingServicer(PricingEngine(seed=42)), server
-    )
+    pricing_pb2_grpc.add_PricingServicer_to_server(PricingServicer(PricingEngine(seed=42)), server)
     health_servicer = health.aio.HealthServicer()
     health_pb2_grpc.add_HealthServicer_to_server(health_servicer, server)
     await health_servicer.set("", health_pb2.HealthCheckResponse.SERVING)
     await health_servicer.set(PRICING_FULL_NAME, health_pb2.HealthCheckResponse.SERVING)
-    reflection.enable_server_reflection(
-        (PRICING_FULL_NAME, reflection.SERVICE_NAME), server
-    )
+    reflection.enable_server_reflection((PRICING_FULL_NAME, reflection.SERVICE_NAME), server)
     port = server.add_insecure_port("[::]:0")
     await server.start()
     ch = grpc.aio.insecure_channel(f"localhost:{port}")

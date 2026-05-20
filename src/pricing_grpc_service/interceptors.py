@@ -90,9 +90,7 @@ class ObservabilityInterceptor(grpc.aio.ServerInterceptor):  # type: ignore[misc
     ) -> grpc.RpcMethodHandler:
         inner = handler.unary_stream
 
-        async def wrapper(
-            request: Any, context: grpc.aio.ServicerContext
-        ) -> AsyncIterator[Any]:
+        async def wrapper(request: Any, context: grpc.aio.ServicerContext) -> AsyncIterator[Any]:
             async for response in self._instrument_stream(method, inner(request, context)):
                 yield response
 
@@ -139,9 +137,7 @@ class ObservabilityInterceptor(grpc.aio.ServerInterceptor):  # type: ignore[misc
         async def wrapper(
             request_iterator: AsyncIterator[Any], context: grpc.aio.ServicerContext
         ) -> AsyncIterator[Any]:
-            async for response in self._instrument_stream(
-                method, inner(request_iterator, context)
-            ):
+            async for response in self._instrument_stream(method, inner(request_iterator, context)):
                 yield response
 
         return grpc.stream_stream_rpc_method_handler(
@@ -187,10 +183,15 @@ class ObservabilityInterceptor(grpc.aio.ServerInterceptor):  # type: ignore[misc
         if streaming:
             logger.info(
                 "rpc method=%s code=%s duration_ms=%.2f messages=%s",
-                method, code.name, elapsed_s * 1000, messages,
+                method,
+                code.name,
+                elapsed_s * 1000,
+                messages,
             )
         else:
             logger.info(
                 "rpc method=%s code=%s duration_ms=%.2f",
-                method, code.name, elapsed_s * 1000,
+                method,
+                code.name,
+                elapsed_s * 1000,
             )

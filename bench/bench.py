@@ -50,9 +50,7 @@ async def run(target: str, concurrency: int, duration_s: float, warmup_s: float)
 
         # Warmup so we don't pay channel/handler init cost in the measured window.
         warmup_deadline = time.perf_counter() + warmup_s
-        await asyncio.gather(
-            *(_worker(stub, warmup_deadline, [], []) for _ in range(concurrency))
-        )
+        await asyncio.gather(*(_worker(stub, warmup_deadline, [], []) for _ in range(concurrency)))
 
         latencies_ns: list[int] = []
         errors: list[grpc.StatusCode] = []
@@ -80,7 +78,9 @@ async def run(target: str, concurrency: int, duration_s: float, warmup_s: float)
     print(f"target={target} concurrency={concurrency} duration={elapsed:.2f}s")
     print(f"  rpcs:    {total} ({rps:,.0f} rps)")
     print(f"  errors:  {err_count}")
-    print(f"  latency (ms): mean={mean:.3f} p50={p50:.3f} p95={p95:.3f} p99={p99:.3f} max={max_ms:.3f}")
+    print(
+        f"  latency (ms): mean={mean:.3f} p50={p50:.3f} p95={p95:.3f} p99={p99:.3f} max={max_ms:.3f}"
+    )
 
 
 def main() -> None:
