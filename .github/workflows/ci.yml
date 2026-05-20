@@ -61,16 +61,19 @@ jobs:
 
       - name: Smoke test the image starts and serves
         run: |
+          set -euo pipefail
           docker run -d --name pricing-ci -p 50051:50051 -p 9090:9090 \
             pricing-grpc-service:ci --seed 1 --log-level INFO
-          # Wait for the server to bind.
-          for i in $(seq 1 20); do
-            if nc -z 127.0.0.1 50051; then break; fi
+          # Wait for both ports to accept traffic.
+          for i in $(seq 1 30); do
+            if nc -z 127.0.0.1 50051 && nc -z 127.0.0.1 9090; then break; fi
             sleep 0.5
           done
-          # /metrics endpoint must be live.
-          curl -sf http://127.0.0.1:9090/metrics > /dev/null
-          # Exercise the unary RPC with grpcurl via reflection.
+          # /metrics endpoint must respond. Retry to absorb startup jitter.
+          curl --silent --show-error --fail \
+               --retry 10 --retry-delay 1 --retry-connrefused \
+               http://127.0.0.1:9090/metrics > /dev/null
+          # Exercise the unary RPC via reflection.
           docker run --rm --network host fullstorydev/grpcurl:latest \
             -plaintext -d '{"symbol":"BTC-USD"}' \
             localhost:50051 pricing.v1.Pricing/GetQuote
