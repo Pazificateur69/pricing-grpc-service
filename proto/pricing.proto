@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package pricing.v1;
+
+// Pricing service exposing quote retrieval RPCs.
+service Pricing {
+  // Get a single quote snapshot for a symbol.
+  rpc GetQuote(QuoteRequest) returns (Quote);
+
+  // Stream quote updates for one or more symbols at the requested interval.
+  rpc StreamQuotes(StreamQuotesRequest) returns (stream Quote);
+}
+
+message QuoteRequest {
+  string symbol = 1;  // e.g. "BTC-USD"
+}
+
+message StreamQuotesRequest {
+  repeated string symbols = 1;
+  uint32 interval_ms = 2;   // server clamps to [50, 5000]; 0 -> default 500
+  uint32 max_updates = 3;   // 0 -> unbounded
+}
+
+message Quote {
+  string symbol = 1;
+  double bid = 2;
+  double ask = 3;
+  double mid = 4;
+  int64 timestamp_ns = 5;
+}

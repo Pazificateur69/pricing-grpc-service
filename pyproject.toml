@@ -1,0 +1,77 @@
+[build-system]
+requires = ["hatchling>=1.21"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pricing-grpc-service"
+version = "0.1.0"
+description = "Async gRPC pricing service in Python: GetQuote (unary) + StreamQuotes (server streaming) with a deterministic in-memory quote engine."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Alessandro Gagliardi" }]
+requires-python = ">=3.11"
+keywords = ["grpc", "pricing", "asyncio", "protobuf", "streaming", "quotes"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Framework :: AsyncIO",
+  "Topic :: Office/Business :: Financial",
+]
+
+dependencies = [
+  "grpcio>=1.62.0",
+  "protobuf>=4.25.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "grpcio-tools>=1.62.0",
+  "pytest>=8.0.0",
+  "pytest-asyncio>=0.23.0",
+  "mypy>=1.9.0",
+  "ruff>=0.4.0",
+]
+
+[project.scripts]
+pricing-grpc-service = "pricing_grpc_service.__main__:main"
+
+[project.urls]
+Repository = "https://github.com/Pazificateur69/pricing-grpc-service"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pricing_grpc_service"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unused_ignores = true
+warn_return_any = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+no_implicit_optional = true
+
+[[tool.mypy.overrides]]
+module = ["pricing_grpc_service.generated.*", "grpc.*", "google.*"]
+ignore_missing_imports = true
+ignore_errors = true
+follow_imports = "skip"
+disallow_untyped_defs = false
+disallow_untyped_calls = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["src/pricing_grpc_service/generated"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "ASYNC", "RUF"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["src"]
