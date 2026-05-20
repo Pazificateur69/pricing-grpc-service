@@ -64,21 +64,23 @@ jobs:
           set -euo pipefail
           docker run -d --name pricing-ci -p 50051:50051 -p 9090:9090 \
             pricing-grpc-service:ci --seed 1 --log-level INFO
-          # Wait for both ports to accept traffic.
-          for i in $(seq 1 30); do
-            if nc -z 127.0.0.1 50051 && nc -z 127.0.0.1 9090; then break; fi
-            sleep 0.5
-          done
-          # /metrics endpoint must respond. Retry to absorb startup jitter.
+
+          # docker-proxy accepts SYNs before the in-container listener is ready,
+          # so polling raw ports is unreliable. Instead, poll the actual HTTP
+          # endpoint for a real 200 response. --retry-all-errors covers the
+          # "connect-then-reset" race that the proxy creates during boot.
           curl --silent --show-error --fail \
-               --retry 10 --retry-delay 1 --retry-connrefused \
+               --retry 30 --retry-delay 1 --retry-all-errors \
                http://127.0.0.1:9090/metrics > /dev/null
+
           # Exercise the unary RPC via reflection.
           docker run --rm --network host fullstorydev/grpcurl:latest \
             -plaintext -d '{"symbol":"BTC-USD"}' \
-            localhost:50051 pricing.v1.Pricing/GetQuote
+            127.0.0.1:50051 pricing.v1.Pricing/GetQuote
+
           # Health check.
           docker run --rm --network host fullstorydev/grpcurl:latest \
-            -plaintext localhost:50051 grpc.health.v1.Health/Check
+            -plaintext 127.0.0.1:50051 grpc.health.v1.Health/Check
+
           docker logs pricing-ci
           docker rm -f pricing-ci
