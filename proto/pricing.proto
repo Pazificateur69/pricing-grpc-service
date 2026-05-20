@@ -9,6 +9,9 @@ service Pricing {
 
   // Stream quote updates for one or more symbols at the requested interval.
   rpc StreamQuotes(StreamQuotesRequest) returns (stream Quote);
+
+  // List the symbols currently tracked by the engine.
+  rpc ListSymbols(ListSymbolsRequest) returns (ListSymbolsResponse);
 }
 
 message QuoteRequest {
@@ -27,4 +30,10 @@ message Quote {
   double ask = 3;
   double mid = 4;
   int64 timestamp_ns = 5;
+}
+
+message ListSymbolsRequest {}
+
+message ListSymbolsResponse {
+  repeated string symbols = 1;
 }

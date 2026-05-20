@@ -76,3 +76,11 @@ class PricingServicer(pricing_pb2_grpc.PricingServicer):
             raise
         finally:
             logger.info("stream end peer=%s sent=%s", peer, sent)
+
+    async def ListSymbols(
+        self,
+        request: pricing_pb2.ListSymbolsRequest,
+        context: grpc.aio.ServicerContext,
+    ) -> pricing_pb2.ListSymbolsResponse:
+        del request, context  # empty request by contract
+        return pricing_pb2.ListSymbolsResponse(symbols=self._engine.known_symbols())

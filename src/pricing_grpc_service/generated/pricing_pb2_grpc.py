@@ -45,6 +45,11 @@ class PricingStub(object):
                 request_serializer=pricing__pb2.StreamQuotesRequest.SerializeToString,
                 response_deserializer=pricing__pb2.Quote.FromString,
                 _registered_method=True)
+        self.ListSymbols = channel.unary_unary(
+                '/pricing.v1.Pricing/ListSymbols',
+                request_serializer=pricing__pb2.ListSymbolsRequest.SerializeToString,
+                response_deserializer=pricing__pb2.ListSymbolsResponse.FromString,
+                _registered_method=True)
 
 
 class PricingServicer(object):
@@ -65,6 +70,13 @@ class PricingServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def ListSymbols(self, request, context):
+        """List the symbols currently tracked by the engine.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_PricingServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -77,6 +89,11 @@ def add_PricingServicer_to_server(servicer, server):
                     servicer.StreamQuotes,
                     request_deserializer=pricing__pb2.StreamQuotesRequest.FromString,
                     response_serializer=pricing__pb2.Quote.SerializeToString,
+            ),
+            'ListSymbols': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListSymbols,
+                    request_deserializer=pricing__pb2.ListSymbolsRequest.FromString,
+                    response_serializer=pricing__pb2.ListSymbolsResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -134,6 +151,33 @@ class Pricing(object):
             '/pricing.v1.Pricing/StreamQuotes',
             pricing__pb2.StreamQuotesRequest.SerializeToString,
             pricing__pb2.Quote.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ListSymbols(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/pricing.v1.Pricing/ListSymbols',
+            pricing__pb2.ListSymbolsRequest.SerializeToString,
+            pricing__pb2.ListSymbolsResponse.FromString,
             options,
             channel_credentials,
             insecure,

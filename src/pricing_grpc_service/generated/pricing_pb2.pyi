@@ -35,3 +35,13 @@ class Quote(_message.Message):
     mid: float
     timestamp_ns: int
     def __init__(self, symbol: _Optional[str] = ..., bid: _Optional[float] = ..., ask: _Optional[float] = ..., mid: _Optional[float] = ..., timestamp_ns: _Optional[int] = ...) -> None: ...
+
+class ListSymbolsRequest(_message.Message):
+    __slots__ = ()
+    def __init__(self) -> None: ...
+
+class ListSymbolsResponse(_message.Message):
+    __slots__ = ("symbols",)
+    SYMBOLS_FIELD_NUMBER: _ClassVar[int]
+    symbols: _containers.RepeatedScalarFieldContainer[str]
+    def __init__(self, symbols: _Optional[_Iterable[str]] = ...) -> None: ...

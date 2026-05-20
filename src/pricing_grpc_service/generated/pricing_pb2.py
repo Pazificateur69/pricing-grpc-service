@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rpricing.proto\x12\npricing.v1\"\x1e\n\x0cQuoteRequest\x12\x0e\n\x06symbol\x18\x01 \x01(\t\"P\n\x13StreamQuotesRequest\x12\x0f\n\x07symbols\x18\x01 \x03(\t\x12\x13\n\x0binterval_ms\x18\x02 \x01(\r\x12\x13\n\x0bmax_updates\x18\x03 \x01(\r\"T\n\x05Quote\x12\x0e\n\x06symbol\x18\x01 \x01(\t\x12\x0b\n\x03\x62id\x18\x02 \x01(\x01\x12\x0b\n\x03\x61sk\x18\x03 \x01(\x01\x12\x0b\n\x03mid\x18\x04 \x01(\x01\x12\x14\n\x0ctimestamp_ns\x18\x05 \x01(\x03\x32\x88\x01\n\x07Pricing\x12\x37\n\x08GetQuote\x12\x18.pricing.v1.QuoteRequest\x1a\x11.pricing.v1.Quote\x12\x44\n\x0cStreamQuotes\x12\x1f.pricing.v1.StreamQuotesRequest\x1a\x11.pricing.v1.Quote0\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rpricing.proto\x12\npricing.v1\"\x1e\n\x0cQuoteRequest\x12\x0e\n\x06symbol\x18\x01 \x01(\t\"P\n\x13StreamQuotesRequest\x12\x0f\n\x07symbols\x18\x01 \x03(\t\x12\x13\n\x0binterval_ms\x18\x02 \x01(\r\x12\x13\n\x0bmax_updates\x18\x03 \x01(\r\"T\n\x05Quote\x12\x0e\n\x06symbol\x18\x01 \x01(\t\x12\x0b\n\x03\x62id\x18\x02 \x01(\x01\x12\x0b\n\x03\x61sk\x18\x03 \x01(\x01\x12\x0b\n\x03mid\x18\x04 \x01(\x01\x12\x14\n\x0ctimestamp_ns\x18\x05 \x01(\x03\"\x14\n\x12ListSymbolsRequest\"&\n\x13ListSymbolsResponse\x12\x0f\n\x07symbols\x18\x01 \x03(\t2\xd8\x01\n\x07Pricing\x12\x37\n\x08GetQuote\x12\x18.pricing.v1.QuoteRequest\x1a\x11.pricing.v1.Quote\x12\x44\n\x0cStreamQuotes\x12\x1f.pricing.v1.StreamQuotesRequest\x1a\x11.pricing.v1.Quote0\x01\x12N\n\x0bListSymbols\x12\x1e.pricing.v1.ListSymbolsRequest\x1a\x1f.pricing.v1.ListSymbolsResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -37,6 +37,10 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_STREAMQUOTESREQUEST']._serialized_end=141
   _globals['_QUOTE']._serialized_start=143
   _globals['_QUOTE']._serialized_end=227
-  _globals['_PRICING']._serialized_start=230
-  _globals['_PRICING']._serialized_end=366
+  _globals['_LISTSYMBOLSREQUEST']._serialized_start=229
+  _globals['_LISTSYMBOLSREQUEST']._serialized_end=249
+  _globals['_LISTSYMBOLSRESPONSE']._serialized_start=251
+  _globals['_LISTSYMBOLSRESPONSE']._serialized_end=289
+  _globals['_PRICING']._serialized_start=292
+  _globals['_PRICING']._serialized_end=508
 # @@protoc_insertion_point(module_scope)

@@ -13,6 +13,9 @@ async def main() -> None:
     async with grpc.aio.insecure_channel("localhost:50051") as channel:
         stub = pricing_pb2_grpc.PricingStub(channel)
 
+        listing = await stub.ListSymbols(pricing_pb2.ListSymbolsRequest())
+        print(f"symbols: {', '.join(listing.symbols)}")
+
         snapshot = await stub.GetQuote(pricing_pb2.QuoteRequest(symbol="BTC-USD"))
         print(
             f"snapshot {snapshot.symbol}: "
